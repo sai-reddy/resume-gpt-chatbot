@@ -61,7 +61,6 @@ def index_resume():
     embeddings = OpenAIEmbeddings(openai_api_key=os.environ['OPENAI_API_KEY'])  
     st.session_state['pinecone_index'] = Pinecone.from_texts([t.page_content for t in texts],
                                                                 embeddings, index_name=PINECONE_INDEX_NAME)
-@st.cache_data
 def waking_up_bot():
     init_pinecone()
     index_resume()
