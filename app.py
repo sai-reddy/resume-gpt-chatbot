@@ -46,6 +46,7 @@ def generate_response(prompt):
 def index_resume():
     # doc =  './data/sai_kalyanreddy_pentaparthi_resume.pdf'
     # loader = UnstructuredPDFLoader(doc)
+
     loader = OnlinePDFLoader('https://storage.googleapis.com/resume-gpt-chatbot/sai_kalyanreddy_pentaparthi_resume.pdf')
     data = loader.load()
 
@@ -62,9 +63,11 @@ def index_resume():
     st.session_state['pinecone_index'] = Pinecone.from_texts([t.page_content for t in texts],
                                                                 embeddings, index_name=PINECONE_INDEX_NAME)
 def waking_up_bot():
-    init_pinecone()
-    index_resume()
-    st.success('Bot is Ready')
+    if st.session_state['pinecone_index'] is None:
+        with st.spinner('Waking up bot'):
+            init_pinecone()
+            index_resume()
+        st.success('Bot is Ready')
     
 # App framework
 def app():
