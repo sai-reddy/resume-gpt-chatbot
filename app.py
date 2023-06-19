@@ -60,10 +60,10 @@ def app():
     waking_up_bot()
 
     with st.sidebar:
-        st.title('🦜️🔗 SAI RESUME GPT CHATBOT')
+        st.title('🦜️🔗 SAI RESUME GPT')
         st.markdown('''
         ## About
-        This app is an OPENAI LLM-powered Resume Chatbot for Sai
+        Chatbot powered by OPENAI LLM models
         ''')
         add_vertical_space(5)
         st.write('Made By Sai Pentaparthi(saikalyanr.p@gmail.com)')
