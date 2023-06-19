@@ -18,7 +18,7 @@ import os
 from io import StringIO
 
 CHUNK_SIZE = 2000
-PINECONE_INDEX_NAME = 'ai-doc-qa'
+PINECONE_INDEX_NAME = 'resume-gpt-chatbot'
 
 
 def init_pinecone():
@@ -43,30 +43,15 @@ def generate_response(prompt):
         response = chain.run(input_documents=docs, question=prompt)
     return response  
  
-def index_resume():
-    # doc =  './data/sai_kalyanreddy_pentaparthi_resume.pdf'
-    # loader = UnstructuredPDFLoader(doc)
+def get_pinecone_index():
+    embeddings = OpenAIEmbeddings(openai_api_key=os.environ['OPENAI_API_KEY'])
+    st.session_state['pinecone_index'] = Pinecone.from_existing_index(index_name=PINECONE_INDEX_NAME, embedding=embeddings)
 
-    loader = OnlinePDFLoader('https://storage.googleapis.com/resume-gpt-chatbot/sai_kalyanreddy_pentaparthi_resume.pdf')
-    data = loader.load()
-
-    # Split into smallest docs possible
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=CHUNK_SIZE, chunk_overlap=0)
-    texts = text_splitter.split_documents(data)
-
-    # If vector count is nearing free limits delete index and recreate it
-    if PINECONE_INDEX_NAME not in pinecone.list_indexes():        
-        pinecone.create_index(PINECONE_INDEX_NAME, dimension=1536, metric='cosine')
-
-    # Create Embeddings
-    embeddings = OpenAIEmbeddings(openai_api_key=os.environ['OPENAI_API_KEY'])  
-    st.session_state['pinecone_index'] = Pinecone.from_texts([t.page_content for t in texts],
-                                                                embeddings, index_name=PINECONE_INDEX_NAME)
 def waking_up_bot():
     if st.session_state.get('pinecone_index') is None:
         with st.spinner('Waking up bot'):
             init_pinecone()
-            index_resume()
+            get_pinecone_index()
         st.success('Bot is Ready')
     
 # App framework
@@ -85,6 +70,13 @@ def app():
         html(f'''
             <a href="www.linkedin.com/in/saikalyanrp" style="color:#ffffff;">LinkedIn Profile</a>
              ''')
+    
+    hide_menu_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            </style>
+            """
+    st.markdown(hide_menu_style, unsafe_allow_html=True)
 
     # Generate empty lists for generated and past.
     ## generated stores AI generated responses
@@ -94,32 +86,28 @@ def app():
     if 'past' not in st.session_state:
         st.session_state['past'] = ['Howdy!']
 
-    input_container = st.container()
-    colored_header(label='', description='', color_name='blue-30')
     response_container = st.container()
+    colored_header(label='', description='', color_name='blue-30')
+    input_container = st.container()
 
    ## Applying the user input box
     with input_container:
-        user_input = get_text()
+        with st.form(key='my_form', clear_on_submit=True):
+            user_input = st.text_area("You:", key='input', height=50)
+            submit_button = st.form_submit_button(label='Send')
 
-    ## Conditional display of AI generated responses as a function of user provided prompts
-    with response_container:
-        if user_input:
+        if submit_button and user_input:
             response = generate_response(user_input)
             st.session_state.past.append(user_input)
             st.session_state.generated.append(response)
-            
-        if st.session_state['generated']:
+
+    ## Conditional display of AI generated responses as a function of user provided prompts
+    if st.session_state['generated']:
+        with response_container:            
             for i in range(len(st.session_state['generated'])):
                 message(st.session_state['past'][i], is_user=True, key=str(i) + '_user')
                 message(st.session_state['generated'][i], key=str(i))
 
-    hide_menu_style = """
-            <style>
-            #MainMenu {visibility: hidden;}
-            </style>
-            """
-    st.markdown(hide_menu_style, unsafe_allow_html=True)
 
 def cleanup():
     pass
