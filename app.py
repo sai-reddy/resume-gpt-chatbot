@@ -1,21 +1,15 @@
-import streamlit as st
+import os
 
-from langchain.document_loaders import UnstructuredPDFLoader, OnlinePDFLoader, PyPDFLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.vectorstores import Chroma, Pinecone
+import pinecone
+import streamlit as st
+from langchain.chains.question_answering import load_qa_chain
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.llms import OpenAI
-from langchain.chains.question_answering import load_qa_chain
-import pinecone
-
-import streamlit as st
-from streamlit_chat import message
-from streamlit_extras.colored_header import colored_header
-from streamlit_extras.add_vertical_space import add_vertical_space
+from langchain.vectorstores import Pinecone
 from streamlit.components.v1 import html
-
-import os
-from io import StringIO
+from streamlit_chat import message
+from streamlit_extras.add_vertical_space import add_vertical_space
+from streamlit_extras.colored_header import colored_header
 
 CHUNK_SIZE = 2000
 PINECONE_INDEX_NAME = 'resume-gpt-chatbot'
@@ -27,13 +21,16 @@ def init_pinecone():
         environment=os.environ['PINECONE_API_ENV']
     )
 
+
 def get_text():
     input_text = st.text_input("You: ", "", key="input")
     return input_text
 
+
 # Response output
-## Function for taking user prompt as input followed by producing AI generated responses
+# Function for taking user prompt as input followed by producing AI generated responses
 def generate_response(prompt):
+    response = None
     # Create llm and chain to answer questions from pinecone index
     llm = OpenAI(temperature=0, openai_api_key=os.environ['OPENAI_API_KEY'])
     chain = load_qa_chain(llm, chain_type="stuff")
@@ -43,9 +40,12 @@ def generate_response(prompt):
         response = chain.run(input_documents=docs, question=prompt)
     return response
 
+
 def get_pinecone_index():
     embeddings = OpenAIEmbeddings(openai_api_key=os.environ['OPENAI_API_KEY'])
-    st.session_state['pinecone_index'] = Pinecone.from_existing_index(index_name=PINECONE_INDEX_NAME, embedding=embeddings)
+    st.session_state['pinecone_index'] = Pinecone.from_existing_index(index_name=PINECONE_INDEX_NAME,
+                                                                      embedding=embeddings)
+
 
 def waking_up_bot():
     if st.session_state.get('pinecone_index') is None:
@@ -53,6 +53,7 @@ def waking_up_bot():
             init_pinecone()
             get_pinecone_index()
         st.success('Bot is Ready')
+
 
 # App framework
 def app():
@@ -79,18 +80,18 @@ def app():
              ''')
 
     # Generate empty lists for generated and past.
-    ## generated stores AI generated responses
+    # generated stores AI generated responses
     if 'generated' not in st.session_state:
         st.session_state['generated'] = ["Hi!, I'm Sai Resume ChatGPT, What do you want to know about Sai?"]
-    ## past stores User's questions
+    # past stores User's questions
     if 'past' not in st.session_state:
         st.session_state['past'] = ['Howdy!']
 
     response_container = st.container()
-    colored_header(label='', description='', color_name='blue-30')
+    colored_header(label='', description='', color_name='blue-70')
     input_container = st.container()
 
-   ## Applying the user input box
+    # Applying the user input box
     with input_container:
         with st.form(key='my_form', clear_on_submit=True):
             user_input = st.text_area("You:", key='input', height=50)
@@ -101,7 +102,7 @@ def app():
             st.session_state.past.append(user_input)
             st.session_state.generated.append(response)
 
-    ## Conditional display of AI generated responses as a function of user provided prompts
+    # Conditional display of AI generated responses as a function of user provided prompts
     if st.session_state['generated']:
         with response_container:
             for i in range(len(st.session_state['generated'])):
@@ -111,6 +112,7 @@ def app():
 
 def cleanup():
     pass
+
 
 if __name__ == '__main__':
     try:
