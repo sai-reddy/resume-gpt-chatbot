@@ -71,12 +71,12 @@ def app():
             <a href="www.linkedin.com/in/saikalyanrp" style="color:#ffffff;">LinkedIn Profile</a>
              ''')
     
-    hide_menu_style = """
-            <style>
-            #MainMenu {visibility: hidden;}
-            </style>
-            """
-    st.markdown(hide_menu_style, unsafe_allow_html=True)
+    # hide_menu_style = """
+    #         <style>
+    #         #MainMenu {visibility: hidden;}
+    #         </style>
+    #         """
+    # st.markdown(hide_menu_style, unsafe_allow_html=True)
 
     # Generate empty lists for generated and past.
     ## generated stores AI generated responses
