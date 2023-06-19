@@ -33,16 +33,16 @@ def get_text():
 
 # Response output
 ## Function for taking user prompt as input followed by producing AI generated responses
-def generate_response(prompt):   
+def generate_response(prompt):
     # Create llm and chain to answer questions from pinecone index
     llm = OpenAI(temperature=0, openai_api_key=os.environ['OPENAI_API_KEY'])
     chain = load_qa_chain(llm, chain_type="stuff")
 
-    if prompt:        
+    if prompt:
         docs = st.session_state['pinecone_index'].similarity_search(prompt)
         response = chain.run(input_documents=docs, question=prompt)
-    return response  
- 
+    return response
+
 def get_pinecone_index():
     embeddings = OpenAIEmbeddings(openai_api_key=os.environ['OPENAI_API_KEY'])
     st.session_state['pinecone_index'] = Pinecone.from_existing_index(index_name=PINECONE_INDEX_NAME, embedding=embeddings)
@@ -53,24 +53,24 @@ def waking_up_bot():
             init_pinecone()
             get_pinecone_index()
         st.success('Bot is Ready')
-    
+
 # App framework
 def app():
     st.set_page_config(page_title="Sai Resume ChatBot - An OPENAI LLM-powered Resume Chat App for Sai", page_icon=":robot:")
     waking_up_bot()
 
     with st.sidebar:
-        st.title('🦜️🔗 SAI RESUME GPT')
+        st.title('🦜️🔗 SAI RESUME ChatGPT')
         st.markdown('''
         ## About
-        Chatbot powered by OPENAI LLM models
+        Chatbot powered by OPENAI ChatGPT LLM models
         ''')
         add_vertical_space(5)
         st.write('Made By Sai Pentaparthi(saikalyanr.p@gmail.com)')
         html(f'''
             <a href="www.linkedin.com/in/saikalyanrp" style="color:#ffffff;">LinkedIn Profile</a>
              ''')
-    
+
     # hide_menu_style = """
     #         <style>
     #         #MainMenu {visibility: hidden;}
@@ -103,7 +103,7 @@ def app():
 
     ## Conditional display of AI generated responses as a function of user provided prompts
     if st.session_state['generated']:
-        with response_container:            
+        with response_container:
             for i in range(len(st.session_state['generated'])):
                 message(st.session_state['past'][i], is_user=True, key=str(i) + '_user')
                 message(st.session_state['generated'][i], key=str(i))
@@ -112,7 +112,7 @@ def app():
 def cleanup():
     pass
 
-if __name__ == '__main__':    
+if __name__ == '__main__':
     try:
         app()
     finally:
