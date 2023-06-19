@@ -35,7 +35,7 @@ def get_text():
 ## Function for taking user prompt as input followed by producing AI generated responses
 def generate_response(prompt):
     # Create llm and chain to answer questions from pinecone index
-    llm = OpenAI(temperature=0, openai_api_key=os.environ['OPENAI_API_KEY'])
+    llm = OpenAI(temperature=0.9, openai_api_key=os.environ['OPENAI_API_KEY'])
     chain = load_qa_chain(llm, chain_type="stuff")
 
     if prompt:
