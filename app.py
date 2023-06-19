@@ -63,7 +63,7 @@ def index_resume():
     st.session_state['pinecone_index'] = Pinecone.from_texts([t.page_content for t in texts],
                                                                 embeddings, index_name=PINECONE_INDEX_NAME)
 def waking_up_bot():
-    if st.session_state['pinecone_index'] is None:
+    if st.session_state.get('pinecone_index') is None:
         with st.spinner('Waking up bot'):
             init_pinecone()
             index_resume()
