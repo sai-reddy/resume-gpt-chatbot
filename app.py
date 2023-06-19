@@ -59,6 +59,13 @@ def app():
     st.set_page_config(page_title="Sai Resume ChatBot - An OPENAI ChatGPT LLM-powered", page_icon=":robot:")
     waking_up_bot()
 
+    hide_menu_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            </style>
+            """
+    st.markdown(hide_menu_style, unsafe_allow_html=True)
+
     with st.sidebar:
         st.title('🦜️🔗 SAI RESUME ChatGPT')
         st.markdown('''
@@ -70,13 +77,6 @@ def app():
         html(f'''
             <a href="www.linkedin.com/in/saikalyanrp" style="color:#ffffff;">LinkedIn Profile</a>
              ''')
-
-    # hide_menu_style = """
-    #         <style>
-    #         #MainMenu {visibility: hidden;}
-    #         </style>
-    #         """
-    # st.markdown(hide_menu_style, unsafe_allow_html=True)
 
     # Generate empty lists for generated and past.
     ## generated stores AI generated responses
