@@ -56,7 +56,7 @@ def waking_up_bot():
 
 # App framework
 def app():
-    st.set_page_config(page_title="Sai Resume ChatBot - An OPENAI LLM-powered Resume Chat App for Sai", page_icon=":robot:")
+    st.set_page_config(page_title="Sai Resume ChatBot - An OPENAI ChatGPT LLM-powered", page_icon=":robot:")
     waking_up_bot()
 
     with st.sidebar:
@@ -81,7 +81,7 @@ def app():
     # Generate empty lists for generated and past.
     ## generated stores AI generated responses
     if 'generated' not in st.session_state:
-        st.session_state['generated'] = ["Hi!, I'm Sai Resume GPT, What do you want to know about Sai?"]
+        st.session_state['generated'] = ["Hi!, I'm Sai Resume ChatGPT, What do you want to know about Sai?"]
     ## past stores User's questions
     if 'past' not in st.session_state:
         st.session_state['past'] = ['Howdy!']
