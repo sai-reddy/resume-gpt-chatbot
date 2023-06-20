@@ -82,7 +82,13 @@ def app():
     # Generate empty lists for generated and past.
     # generated stores AI generated responses
     if 'generated' not in st.session_state:
-        st.session_state['generated'] = ["Hi!, I'm Sai Resume ChatGPT, What do you want to know about Sai?"]
+        st.session_state['generated'] = ["Hi!, I'm Sai Resume ChatGPT, "
+                                         "You can ask me questions like"
+                                         "Who is sai?"
+                                         "Where is sai working currently",
+                                         "Where did he graduate from",
+                                         "what databases he know",
+                                         "what did sai do with postgresql"]
     # past stores User's questions
     if 'past' not in st.session_state:
         st.session_state['past'] = ['Howdy!']
