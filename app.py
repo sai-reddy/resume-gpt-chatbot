@@ -86,6 +86,7 @@ def app():
                                          who is sai
                                          where is sai working currently
                                          where did he graduate from
+                                         what programming languages sai know
                                          what databases he know
                                          what did sai do with postgresql
                                          etc..."""]
