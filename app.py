@@ -32,7 +32,7 @@ def get_text():
 def generate_response(prompt):
     response = None
     # Create llm and chain to answer questions from pinecone index
-    llm = OpenAI(temperature=0, openai_api_key=os.environ['OPENAI_API_KEY'])
+    llm = OpenAI(temperature=0.5, openai_api_key=os.environ['OPENAI_API_KEY'])
     chain = load_qa_chain(llm, chain_type="stuff")
 
     if prompt:
